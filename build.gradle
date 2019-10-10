@@ -1,0 +1,71 @@
+// 构建脚本
+buildscript {
+    ext {
+        springBootVersion = '2.0.2.RELEASE'
+    }
+    repositories {
+        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+
+// 所有项目共有的配置，包括 根项目和子项目
+allprojects {
+    apply plugin: 'java'
+    apply plugin: 'idea'
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
+
+//    通过bootWar 打包成war包
+    apply plugin: 'war'
+
+    group 'com.example'
+    version '1.0-SNAPSHOT'
+
+    sourceCompatibility = 1.8
+
+    repositories {
+        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+        mavenCentral()
+    }
+
+    dependencies {
+        compile('org.springframework.boot:spring-boot-starter-web')
+        testCompile('org.springframework.boot:spring-boot-starter-test')
+    }
+
+    //这里一定得要。在多模块下，不然编译失败，因为不会把信赖模块给打包。
+    jar {
+        enabled = true
+    }
+
+    //打包成可执行jar
+    bootJar {
+//        enabled = false
+        classifier = 'boot'
+    }
+
+
+
+    //allprojects 是对root project 和所有Child Project的配置
+    tasks.create('hello') {
+        doLast {
+            task ->
+                print "project name is $task.project.name \n"
+        }
+    }
+}
+
+// subprojects是对所有Child Project的配置
+subprojects {
+
+    tasks.create('hello2') {
+        doLast {
+            task ->
+                print "project name is $task.project.name \n"
+        }
+    }
+}

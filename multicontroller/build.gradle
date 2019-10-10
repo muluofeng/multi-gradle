@@ -1,0 +1,5 @@
+description = 'myapp-controller'
+dependencies {
+    // 该子工程包含另外一个子工程
+    compile project(':multi-service')
+}
